@@ -8,7 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ZoomIn, ZoomOut, Maximize, MoveHorizontal, Search, Settings2, Info, Download, RefreshCw, Copy, ExternalLink, Sparkles } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize, Search, Settings2, Info, Download, RefreshCw, Copy, ExternalLink, Sparkles } from "lucide-react";
 import { getNodePrompts, type NodePromptData } from "@/data/nodePrompts";
 
 // ---------------- Mermaid patterns (internal only; source not shown) ----------------
@@ -250,7 +250,7 @@ function useDebounced<T>(value: T, delay = 300) {
 
 export default function MermaidPatternExplorer() {
   const [query, setQuery] = useState("");
-  const [theme, setTheme] = useState("default" as const);
+  const [theme, setTheme] = useState<"default" | "neutral" | "dark" | "forest" | "base">("default");
   const [scale, setScale] = useState(100);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [panning, setPanning] = useState(false);
