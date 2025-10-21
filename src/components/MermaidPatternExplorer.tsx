@@ -8,8 +8,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ZoomIn, ZoomOut, Maximize, Search, Settings2, Info, Download, RefreshCw, Copy, ExternalLink, Sparkles } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize, Search, Settings2, Info, Download, RefreshCw, Copy, ExternalLink, Sparkles, Heart, GraduationCap, Briefcase, Users, Activity, Brain } from "lucide-react";
 import { getNodePrompts, type NodePromptData } from "@/data/nodePrompts";
+import { getWellbeingExamples } from "@/data/wellbeingExamples";
 
 // ---------------- Mermaid patterns (internal only; source not shown) ----------------
 const PATTERNS: { key: string; title: string; code: string }[] = [
@@ -126,107 +127,6 @@ const PATTERNS: { key: string; title: string; code: string }[] = [
   SYN --> OUT[Report + Citations]`
   }
 ];
-
-// ---------------- Real examples to show under diagrams ----------------
-const EXAMPLES: Record<string, { headline: string; steps: string[]; snippet?: string }> = {
-  deep_research: {
-    headline: "Find instruments for measuring well‑being (WHO‑5, PERMA, FS) and compare strengths",
-    steps: [
-      "Planner → break into subtasks: (a) official questionnaire links, (b) psychometrics, (c) usage tips",
-      "Searcher → queries: 'WHO‑5 questionnaire official', 'PERMA profiler pdf', 'Flourishing Scale Diener'",
-      "Reader/Extractor → pull key lines (items, scoring), store URL + quote in Evidence Store",
-      "Verifier → cross‑check item counts/scoring across 2 sources each; drop duplicates/low‑cred",
-      "Writer → synthesize: when to use each, with links and a 1‑line pro/con table"
-    ],
-    snippet: "Output fragment: 'WHO‑5: 5 items / 0–5 Likert → 0–25, ×4 → 0–100; good for brief positive affect & vitality. PERMA: multi‑domain well‑being; longer; use when you need sub‑scores.'"
-  },
-  react: {
-    headline: "Schedule a study block when my calendar is free tomorrow afternoon",
-    steps: [
-      "Think → if any existing events 13:00–17:00? If none, propose 90‑minute block",
-      "Act → call calendar.list({ date: 'tomorrow', window: '13:00-17:00' })",
-      "Observe → results show 15:00–16:00 busy; free: 13:00–15:00 & 16:00–17:00",
-      "Think → choose 13:30–15:00; prepare event details",
-      "Act → calendar.create({ title:'Deep work', start:'13:30', end:'15:00' })",
-      "Answer → confirm with the user"
-    ]
-  },
-  reflexion: {
-    headline: "Refine a lesson plan after weak student engagement",
-    steps: [
-      "Attempt → draft a 30‑min activity",
-      "Feedback → engagement score 2/5 from pilot",
-      "Reflect → note: instructions too long; add 3‑min demo video; include peer‑pairing",
-      "Retry → new plan with demo + pair activity",
-      "Attempt → run again and compare scores"
-    ]
-  },
-  tree_of_thoughts: {
-    headline: "Brainstorm wellbeing prompts for a journaling app",
-    steps: [
-      "Seed → 'Evening reflection prompt'",
-      "Expand → generate 5 variants (gratitude, skill growth, connection, awe, kindness)",
-      "Score → rate for autonomy, competence, relatedness support (1–5)",
-      "Select/Prune → keep top 2; iterate to refine wording"
-    ]
-  },
-  multi_agent_debate: {
-    headline: "Should we use WHO‑5 or PERMA for a 1‑week classroom pilot?",
-    steps: [
-      "Agent A → argues WHO‑5: brevity + clear scoring",
-      "Agent B → argues PERMA: multi‑dim insight",
-      "Rebuttals → address sample size & participant fatigue",
-      "Judge → picks WHO‑5 for pilot; recommends PERMA for follow‑up"
-    ]
-  },
-  assembly_line: {
-    headline: "Build a minimal wellbeing check‑in bot",
-    steps: [
-      "Planner → split: copy, UI, logging",
-      "Researcher → gather 2‑item versions of scales",
-      "Coder → implement UI + local store",
-      "Tester → verify scoring + timestamps",
-      "Report → README with setup + ethics note"
-    ]
-  },
-  router_graph: {
-    headline: "Answer student questions with citations, otherwise reply directly",
-    steps: [
-      "Router → if 'source?'/'cite'/'evidence' present → Node A (RAG), else Node C (Summarize)",
-      "Node A → retrieve & rank; update State Store",
-      "Node B → call tools (e.g., web, pdf) if gaps found",
-      "Node C → compose final answer; attach citations if present in state"
-    ]
-  },
-  mcp: {
-    headline: "Pull a consent template from a policy repo via MCP",
-    steps: [
-      "LLM Client → asks MCP Client for `fs.search` tool",
-      "MCP Client → calls MCP Server: fs.search({ q:'consent template wellbeing' })",
-      "Server → returns file path + excerpt",
-      "Client → returns result to LLM for synthesis"
-    ]
-  },
-  computer_use: {
-    headline: "Populate a Google Sheet with scale results",
-    steps: [
-      "Plan → open sheet; locate first empty row",
-      "Computer Use → type values; paste timestamp",
-      "Observe → screenshot confirms row appended",
-      "Approval Gate → ask before sharing file link"
-    ]
-  },
-  web_researcher: {
-    headline: "Compare PERMA vs. Flourishing Scale in undergraduate samples",
-    steps: [
-      "Controller → craft two queries + inclusion criteria",
-      "Retriever → collect results; filter duplicates",
-      "Reader → extract N, reliability, findings",
-      "Evidence → store quotes + links",
-      "Synthesizer → write a 1‑paragraph comparison with citations"
-    ]
-  }
-};
 
 // ---------------- Glossary ----------------
 const GLOSSARY: { term: string; def: string; example: string }[] = [
@@ -435,7 +335,33 @@ export default function MermaidPatternExplorer() {
     img.src = image64;
   };
 
-  const example = EXAMPLES[active.key];
+  const examples = getWellbeingExamples(active.key);
+
+  // Helper to get domain icon
+  const getDomainIcon = (domain: string) => {
+    switch (domain) {
+      case "Mental Health": return <Heart className="w-4 h-4" />;
+      case "Education": return <GraduationCap className="w-4 h-4" />;
+      case "Personal Growth": return <Brain className="w-4 h-4" />;
+      case "Community": return <Users className="w-4 h-4" />;
+      case "Physical Health": return <Activity className="w-4 h-4" />;
+      case "Workplace": return <Briefcase className="w-4 h-4" />;
+      default: return <Sparkles className="w-4 h-4" />;
+    }
+  };
+
+  // Helper to get domain color
+  const getDomainColor = (domain: string) => {
+    switch (domain) {
+      case "Mental Health": return "bg-rose-100 text-rose-700 border-rose-200";
+      case "Education": return "bg-blue-100 text-blue-700 border-blue-200";
+      case "Personal Growth": return "bg-purple-100 text-purple-700 border-purple-200";
+      case "Community": return "bg-green-100 text-green-700 border-green-200";
+      case "Physical Health": return "bg-orange-100 text-orange-700 border-orange-200";
+      case "Workplace": return "bg-indigo-100 text-indigo-700 border-indigo-200";
+      default: return "bg-slate-100 text-slate-700 border-slate-200";
+    }
+  };
 
   return (
     <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -592,20 +518,57 @@ export default function MermaidPatternExplorer() {
           </CardContent>
         </Card>
 
-        {/* Real example panel */}
+        {/* Wellbeing examples panel */}
         <Card className="shadow-md border-slate-200">
           <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <CardTitle className="text-base">Real-World Example</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Heart className="w-5 h-5 text-rose-600" />
+              Wellbeing-Focused Examples
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="mb-3 text-slate-800 font-semibold text-base">{example?.headline}</div>
-            <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-700">
-              {example?.steps.map((s, i) => (<li key={i}>{s}</li>))}
-            </ol>
-            {example?.snippet && (
-              <div className="mt-4 text-xs text-slate-600 border-l-4 border-blue-400 rounded-md p-3 bg-blue-50">
-                <strong className="text-blue-700">Output:</strong> {example.snippet}
-              </div>
+            {examples.length === 0 ? (
+              <p className="text-sm text-slate-600 italic">No examples yet for this pattern. Check back soon!</p>
+            ) : (
+              <Accordion type="single" collapsible className="space-y-2">
+                {examples.map((ex, idx) => (
+                  <AccordionItem key={idx} value={`ex-${idx}`} className="border rounded-lg">
+                    <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-slate-50">
+                      <div className="flex items-start gap-3 text-left w-full">
+                        <Badge className={`${getDomainColor(ex.domain)} shrink-0 gap-1 border`}>
+                          {getDomainIcon(ex.domain)}
+                          {ex.domain}
+                        </Badge>
+                        <span className="text-sm font-semibold text-slate-800 flex-1">{ex.headline}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      {ex.context && (
+                        <div className="mb-3 text-xs text-slate-600 italic bg-slate-50 p-2 rounded border-l-2 border-slate-300">
+                          <strong>Context:</strong> {ex.context}
+                        </div>
+                      )}
+                      <ol className="list-decimal pl-5 space-y-1.5 text-sm text-slate-700">
+                        {ex.steps.map((s, i) => (<li key={i}>{s}</li>))}
+                      </ol>
+                      {ex.snippet && (
+                        <div className="mt-3 text-xs text-slate-600 border-l-4 border-blue-400 rounded-md p-3 bg-blue-50">
+                          <strong className="text-blue-700">Output:</strong> {ex.snippet}
+                        </div>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 mt-3"
+                        onClick={() => navigator.clipboard.writeText(ex.steps.join("\n"))}
+                      >
+                        <Copy className="w-3 h-3" />
+                        Copy Steps
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             )}
           </CardContent>
         </Card>
@@ -615,16 +578,6 @@ export default function MermaidPatternExplorer() {
           <span className="text-xs text-slate-600 font-medium">Scale</span>
           <Slider value={[scale]} min={25} max={400} step={5} onValueChange={(v) => setScale(v[0])} className="w-full sm:w-64" />
           <span className="text-xs text-slate-600 font-mono">{scale}%</span>
-          <div className="flex-1" />
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => navigator.clipboard.writeText((example?.steps || []).join("\n"))}
-          >
-            <Copy className="w-4 h-4" />
-            Copy Steps
-          </Button>
         </div>
       </main>
 
