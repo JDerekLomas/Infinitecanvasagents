@@ -6,11 +6,13 @@ An interactive visualization tool for exploring AI agent patterns with real-worl
 
 - **Interactive Diagrams**: Click on nodes to see example prompts and real implementations
 - **10+ Agent Patterns**: ReAct, Reflexion, Tree of Thoughts, Multi-Agent Debate, and more
-- **Real-World Examples**: Prompts from LangChain, AutoGPT, BabyAGI, MetaGPT, GPT Researcher, and other open systems
+- **30+ Wellbeing Examples**: Real scenarios across Mental Health, Education, Personal Growth, Workplace, Community, and Physical Health domains
+- **Evidence-Based**: Research-backed interventions, validated assessments, and practical implementations
 - **Pan & Zoom**: Smooth navigation with mouse, trackpad, and keyboard shortcuts
 - **Export**: Download diagrams as SVG or PNG
 - **Responsive Design**: Works on desktop, tablet, and mobile
 - **Theme Options**: Multiple Mermaid diagram themes
+- **Domain Badges**: Color-coded examples with contextual icons
 
 ## 🚀 Getting Started
 
@@ -72,10 +74,11 @@ npm run preview
 ```
 src/
 ├── components/
-│   ├── ui/              # shadcn/ui components
-│   └── MermaidPatternExplorer.tsx
+│   ├── ui/                        # shadcn/ui components
+│   └── MermaidPatternExplorer.tsx # Main component
 ├── data/
-│   └── nodePrompts.ts   # Prompt examples database
+│   ├── nodePrompts.ts             # Technical prompt examples
+│   └── wellbeingExamples.ts       # Wellbeing-focused scenarios
 ├── lib/
 │   └── utils.ts
 ├── App.tsx
@@ -85,19 +88,51 @@ src/
 
 ## 🌐 Deployment
 
-### Netlify (Recommended)
+### Vercel (Recommended)
 
-This project is configured for one-click deployment to Netlify:
+This project is optimized for Vercel with zero-configuration deployment:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/JDerekLomas/Infinitecanvasagents)
+
+**Option 1: Deploy via Vercel Dashboard**
+1. Go to [vercel.com](https://vercel.com)
+2. Click "Add New" → "Project"
+3. Import your GitHub repository
+4. Vercel auto-detects Vite settings
+5. Click "Deploy"
+
+**Option 2: Deploy via Vercel CLI**
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy to Vercel
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+The `vercel.json` configuration handles:
+- Build command: `npm run build`
+- Output directory: `dist`
+- SPA routing redirects
+- Framework: Vite (auto-detected)
+
+### Netlify
+
+Alternative deployment to Netlify:
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
 
-Or manually:
+Or via CLI:
 
 ```bash
 # Build the project
 npm run build
 
 # Deploy the dist/ folder to Netlify
+netlify deploy --prod
 ```
 
 The `netlify.toml` configuration handles:
@@ -108,18 +143,22 @@ The `netlify.toml` configuration handles:
 ### Other Platforms
 
 The built `dist/` folder can be deployed to:
-- Vercel
 - GitHub Pages
 - Cloudflare Pages
+- AWS S3 + CloudFront
 - Any static hosting service
 
 ## 🤝 Contributing
 
-Contributions welcome! To add new patterns or prompts:
+Contributions welcome! To add new patterns or examples:
 
-1. Add pattern to `PATTERNS` array in `MermaidPatternExplorer.tsx`
-2. Add example to `EXAMPLES` object
-3. Add node prompts to `src/data/nodePrompts.ts`
+1. **Add a new pattern**: Update `PATTERNS` array in `MermaidPatternExplorer.tsx` with Mermaid diagram code
+2. **Add wellbeing examples**: Add scenarios to `src/data/wellbeingExamples.ts` (categorized by domain)
+3. **Add node prompts**: Add technical prompts to `src/data/nodePrompts.ts` (mapped to node types)
+
+Example domains for wellbeing scenarios:
+- Mental Health, Education, Personal Growth
+- Workplace, Community, Physical Health
 
 ## 📝 License
 
